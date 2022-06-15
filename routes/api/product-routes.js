@@ -11,7 +11,12 @@ router.get('/', (req, res) => {
     attributes: ['id', 'product_name', 'price', 'stock'],
     include: [
       {
-        model: Category
+        model: Category,
+        attributes: ['id', 'category_name']
+      },
+      {
+        model: Tag,
+        attributes: ['id', 'tag_name']
       }
     ]
   })
@@ -30,18 +35,28 @@ router.get('/:id', (req, res) => {
     where: {
       id: req.params.id
     },
-    attributes: ['id', 'product_name', 'price', 'stock']
+    attributes: ['id', 'product_name', 'price', 'stock'],
+    include: [
+      {
+        model: Category,
+        attributes: ['id', 'category_name']
+      },
+      {
+        model: Tag,
+        attributes: ['id', 'tag_name']
+      }
+    ]
   })
-  .then(dbCategoryData => {
-    if (!dbCategoryData) {
-      res.status(404).json({ message: 'No category found with this id' })
-      return;
-    }
-    res.json(dbCategoryData)
-  })
-  .catch(err => {
-    res.status(500).json(err)
-  })
+    .then(dbCategoryData => {
+      if (!dbCategoryData) {
+        res.status(404).json({ message: 'No category found with this id' })
+        return;
+      }
+      res.json(dbCategoryData)
+    })
+    .catch(err => {
+      res.status(500).json(err)
+    })
 });
 
 // create new product
@@ -124,8 +139,18 @@ router.delete('/:id', (req, res) => {
     where: {
       id: req.params.id
     }
-    
+
   })
+    .then(dbProductData => {
+      if (!dbProductData) {
+        res.status(500).json({ message: 'No category found with this id' })
+      }
+      res.json(dbProductData);
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(500).json(err);
+    });
 });
 
 module.exports = router;
